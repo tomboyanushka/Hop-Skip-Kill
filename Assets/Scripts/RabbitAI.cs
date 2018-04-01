@@ -4,16 +4,18 @@ using UnityEngine;
 
 public class RabbitAI : MonoBehaviour {
 
-	enum RabbitState { Move, Mine, Attack};
-	static int priorityValue = 0;				// default value 0 is highest priority
-	List<int> queuedLayers = new List<int>();
+	enum RabbitState { Attack, Mine, Move };		// values 0, 1 and 2 act as priority values with 0 being the highest
+	List<int> queuedLayers = new List<int>();		// priority order can be changed as needed
 	Rigidbody2D rBody;
 	RabbitProperties properties;
+	RabbitState currentState;
+
 	// Use this for initialization
 	void Start () {
 		rBody = GetComponent<Rigidbody2D>();
 		properties = GetComponent<RabbitProperties>();
 		queuedLayers.Add((int)RabbitState.Move);
+		currentState = RabbitState.Move;
 	}
 	
 	// Update is called once per frame
@@ -22,26 +24,34 @@ public class RabbitAI : MonoBehaviour {
 		{
 			if (queuedLayers == null || queuedLayers.Count == 0)
 			{
-				queuedLayers.Add(0);
+				queuedLayers.Add((int)RabbitState.Move);		// default state
 			}
 			else
 			{
-				queuedLayers.Sort();
-				if (queuedLayers[0] == (int)RabbitState.Move)
+				queuedLayers.Sort();                            // Ascending order sort, Sorts according to highest priority (0 = highest priority)
+				if (queuedLayers[0] == (int)RabbitState.Move)	// index 0 will have lowest value after sort
 				{
 					// Call move function
+					currentState = RabbitState.Move;
 					Move();
+					//print("Move");
 				}
 				else if (queuedLayers[0] == (int)RabbitState.Mine)
 				{
 					// Call mine function
+					currentState = RabbitState.Mine;
 					//Mine();
+					print("Mine");
 				}
 				else if (queuedLayers[0] == (int)RabbitState.Attack)
 				{
 					// Call attack function
+					currentState = RabbitState.Attack;
 					//Attack();
+					print("Attack");
 				}
+				queuedLayers.RemoveAt(0);						// Remove the highest priority action after execution
+																// may need to change the position of this
 			}
 		}
 		catch (System.IndexOutOfRangeException e)
