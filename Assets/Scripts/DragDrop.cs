@@ -1,46 +1,56 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.EventSystems;
 
-/*public class DragDrop : MonoBehaviour, IBeginRabbitDragDrop, IRabbitDragDrop, IEndDragDrop {
 
-    #region IBeginRabbitDragDrop implementation
+public class DragDrop : MonoBehaviour {
 
-    public void OnRabbitDrag(PointerEventData eventData)
+   [System.Serializable]
+     class IconColor
+     {
+         public Color hoverColor;
+         public Color originalColor; 
+
+     }
+
+    private Color c1;
+    private Color c2;
+
+    IconColor icon;
+    private bool dragging = false;
+    private float distanceDragged;
+
+    void Start()
     {
-        throw new System.NotImplementedException();
+        c1 = icon.hoverColor;
+        c2 = icon.originalColor;
     }
 
-    #endregion
-
-    #region IRabbitDragDrop implementation
-
-    public void OnMouseDrag(PointerEventData eventData)
+    void OnMouseEnter()
     {
-        throw new System.NotImplementedException();
+        GetComponent<Renderer>().material.color = c1;
     }
-    #endregion
 
-    #region IEndDragDrop implementation
+    void OnMouseExit()
+    {
+        GetComponent<Renderer>().material.color = c2;
+    }
 
+    void OnMouseDown()
+    {
+        distanceDragged = Vector3.Distance(transform.position, Camera.main.transform.position);
+        dragging = true;
+    }
 
+    void OnMouseUp()
+    {
+        dragging = false;
+    }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-}*/
+    void Update()
+    {
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        Vector3 rayPoint = ray.GetPoint(distanceDragged);
+        transform.position = rayPoint;
+    }
+}
