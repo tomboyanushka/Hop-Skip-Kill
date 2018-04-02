@@ -62,15 +62,15 @@ public class RabbitAI : MonoBehaviour {
 
 	public void Move()
 	{
-		if (properties.onFloor)
-		{
-			transform.position += new Vector3(properties.speed * Time.deltaTime, 0, 0);
-		}
-		else if (!properties.onFloor)
-		{
-			transform.position += new Vector3(0, -properties.gravity * Time.deltaTime, 0);
-		}
-	}
+            if (properties.onFloor)
+            {
+                transform.position += new Vector3(properties.speed * Time.deltaTime, 0, 0);
+            }
+            else if (!properties.onFloor)
+            {
+                transform.position += new Vector3(0, -properties.gravity * Time.deltaTime, 0);
+            }
+    }
 
 	private void OnTriggerEnter2D(Collider2D collision)
 	{
