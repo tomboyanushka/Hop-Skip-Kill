@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Floor
   - Rabbit
+  - Resource
   layers:
   - Default
   - TransparentFX

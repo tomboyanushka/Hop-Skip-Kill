@@ -9,6 +9,9 @@ public class RabbitAI : MonoBehaviour {
 	Rigidbody2D rBody;
 	RabbitProperties properties;
 	RabbitState currentState;
+    GameObject target;
+    float cooldown;
+    public int miningSpeed = 1;
 
 	// Use this for initialization
 	void Start () {
@@ -16,6 +19,7 @@ public class RabbitAI : MonoBehaviour {
 		properties = GetComponent<RabbitProperties>();
 		queuedLayers.Add((int)RabbitState.Move);
 		currentState = RabbitState.Move;
+        cooldown = 3f;
 	}
 	
 	// Update is called once per frame
@@ -40,14 +44,14 @@ public class RabbitAI : MonoBehaviour {
 				{
 					// Call mine function
 					currentState = RabbitState.Mine;
-					//Mine();
+					Mine();
 					print("Mine");
 				}
 				else if (queuedLayers[0] == (int)RabbitState.Attack)
 				{
 					// Call attack function
 					currentState = RabbitState.Attack;
-					//Attack();
+					Attack();
 					print("Attack");
 				}
 				queuedLayers.RemoveAt(0);						// Remove the highest priority action after execution
@@ -62,14 +66,49 @@ public class RabbitAI : MonoBehaviour {
 
 	public void Move()
 	{
-            if (properties.onFloor)
+        if (properties.onFloor)
+        {
+            transform.position += new Vector3(properties.speed * Time.deltaTime, 0, 0);
+        }
+        else if (!properties.onFloor)
+        {
+            transform.position += new Vector3(0, -properties.gravity * Time.deltaTime, 0);
+        }
+    }
+
+    public void Mine()
+    {
+        cooldown -= Time.deltaTime * miningSpeed;
+        if(cooldown <= 0)
+        {
+            // Increase resource of specified part
+            if (GetComponent<RabbitProperties>().RabbitType == 0)
             {
-                transform.position += new Vector3(properties.speed * Time.deltaTime, 0, 0);
+
             }
-            else if (!properties.onFloor)
+            else
             {
-                transform.position += new Vector3(0, -properties.gravity * Time.deltaTime, 0);
+
             }
+            cooldown = 3;
+        }
+    }
+
+    public void Attack()
+    {
+        cooldown -= Time.deltaTime;
+        if(cooldown <= 0)
+        {
+            if(target.tag == "Rabbit")
+            {
+                target.GetComponent<RabbitProperties>().health--;
+            }
+            else
+            {
+                // Decrement enemy resources
+            }
+            cooldown = 3;
+        }
     }
 
 	private void OnTriggerEnter2D(Collider2D collision)
@@ -84,6 +123,31 @@ public class RabbitAI : MonoBehaviour {
 			properties.onFloor = false;
 			rBody.gravityScale = 1;
 		}
+
+        // Attacking wall
+        if(collision.gameObject.tag == "Wall")
+        {
+            target = collision.gameObject;
+        }
+        // Attacking rabbit
+        else if(collision.gameObject.tag == "Rabbit")
+        {
+            if(collision.gameObject.GetComponent<RabbitProperties>().RabbitType != GetComponent<RabbitProperties>().RabbitType)
+            {
+                queuedLayers.Add((int)RabbitState.Attack);
+                target = collision.gameObject;
+            }
+        }
+        // Mining
+        else if(collision.gameObject.tag == "Resource")
+        {
+            queuedLayers.Add((int)RabbitState.Mine);
+        }
 	}
+
+    private void OnTriggerStay2D(Collider2D collision)
+    {
+
+    }
 }
 
