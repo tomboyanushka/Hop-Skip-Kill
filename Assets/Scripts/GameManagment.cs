@@ -111,7 +111,7 @@ public class GameManagment : MonoBehaviour {
         }
         else if (type == 1)
         {
-            if (res==1)
+            if (res==0)
             {
                 EnemyResourceA--;
                 rAI.miningSpeed = 2;
