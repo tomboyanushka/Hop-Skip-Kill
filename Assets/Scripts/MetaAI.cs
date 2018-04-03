@@ -73,6 +73,9 @@ public class MetaAI : MonoBehaviour
         newRabbit.GetComponent<RabbitProperties>().speed = -(newRabbit.GetComponent<RabbitProperties>().speed);
         rabbitCount--;
         isRabbitSpawned = true;
+
+        newRabbit.GetComponentInChildren<SpriteRenderer>().flipX = true;
+
         manager.enemyRabbits.Add(newRabbit);
     }
 
