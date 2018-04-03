@@ -8,6 +8,10 @@ public class MetaAI : MonoBehaviour
     public int resourceCount = 10;
     public GameObject spawnObject;
     public GameObject spawnPT;
+    GameManagment manager;
+    int res;
+    //int type = 1;
+    
 
     public GameObject spawnTop, spawnMiddle, spawnBottom;
 
@@ -24,25 +28,22 @@ public class MetaAI : MonoBehaviour
 
     private void Update()
     {
-        /*
-        int place = Random.Range(0, 3);
-        if(place == 0)
-        {
-            spawnPT = spawnTop;
-        }
-        else if(place == 1)
-        {
-            spawnPT = spawnMiddle;
-        }
-        else
-        {
-            spawnPT = spawnBottom;
-        }
-        */
+        res = Random.Range(0, 1);
         spawnPT = spawnMiddle;
         if (rabbitCount > 0 && isRabbitSpawned == false)
         {
             spawnRabbit();
+        }
+        if (resourceCount >= 0)
+        {
+            if (res == 0)
+            {
+                manager.GetComponent<GameManagment>().useResources(1, 0);
+            }
+            else if (res == 1)
+            {
+                manager.GetComponent<GameManagment>().useResources(1, 1);
+            }
         }
         
     }
@@ -56,6 +57,8 @@ public class MetaAI : MonoBehaviour
         isRabbitSpawned = true;
 
     }
+
+
 
 
 }
