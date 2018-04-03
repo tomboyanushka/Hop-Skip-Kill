@@ -5,12 +5,12 @@ using UnityEngine;
 public class MetaAI : MonoBehaviour
 {
     public int rabbitCount = 10;
-    public int resourceCount = 10;
+    public int resourceCount;
     public GameObject spawnObject;
     public GameObject spawnPT;
     GameManagment manager;
     int res;
-    //int type = 1;
+  
     
 
     public GameObject spawnTop, spawnMiddle, spawnBottom;
@@ -23,11 +23,12 @@ public class MetaAI : MonoBehaviour
 
     private void Start()
     {
-
+        
     }
 
     private void Update()
     {
+        resourceCount = manager.GetComponent<GameManagment>().enemyResourceSum;
         res = Random.Range(0, 1);
         spawnPT = spawnMiddle;
         if (rabbitCount > 0 && isRabbitSpawned == false)

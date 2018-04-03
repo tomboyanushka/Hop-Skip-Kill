@@ -12,8 +12,8 @@ public class GameManagment : MonoBehaviour
     public int PlayerResourceC; //C for stolen resources.
     public int EnemyResourceC;
     bool collideResourcewall = false;
-    int playerResourceSum;
-    int enemyResourceSum;
+    public int playerResourceSum;
+    public int enemyResourceSum;
     float targetTime= 5;
     RabbitProperties thisRabbitprop; //accessing the Rabbitproperties script.
     RabbitAI rAI; //accessing the rabbitAI script
