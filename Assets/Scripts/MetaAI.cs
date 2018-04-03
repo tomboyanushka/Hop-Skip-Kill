@@ -42,15 +42,20 @@ public class MetaAI : MonoBehaviour
         spawnPT = spawnMiddle;
         if (rabbitCount > 0 && isRabbitSpawned == false)
         {
-            GameObject newRabbit = Instantiate(spawnObject, spawnPT.transform.position, new Quaternion()) as GameObject;
-            newRabbit.GetComponent<RabbitProperties>().RabbitType = 1;
-            newRabbit.GetComponent<RabbitProperties>().speed = -(newRabbit.GetComponent<RabbitProperties>().speed);
-            rabbitCount--;
-            isRabbitSpawned = true;      
-            
+            spawnRabbit();
         }
         
     }
 
-    
+    public void spawnRabbit()
+    {
+        GameObject newRabbit = Instantiate(spawnObject, spawnPT.transform.position, new Quaternion()) as GameObject;
+        newRabbit.GetComponent<RabbitProperties>().RabbitType = 1;
+        newRabbit.GetComponent<RabbitProperties>().speed = -(newRabbit.GetComponent<RabbitProperties>().speed);
+        rabbitCount--;
+        isRabbitSpawned = true;
+
+    }
+
+
 }

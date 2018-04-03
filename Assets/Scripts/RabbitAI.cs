@@ -22,7 +22,7 @@ public class RabbitAI : MonoBehaviour {
 		currentState = RabbitState.Move;
         cooldown = 1f;
         gm = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManagment>();
-        Debug.Log(gm);
+        //Debug.Log(gm);
         Debug.Log("Reminder: 0 = Attack, 1 = Mine, 2 = Move");
 	}
 	
