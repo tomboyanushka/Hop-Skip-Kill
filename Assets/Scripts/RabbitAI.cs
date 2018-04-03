@@ -22,6 +22,7 @@ public class RabbitAI : MonoBehaviour {
 		currentState = RabbitState.Move;
         cooldown = 1f;
         gm = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManagment>();
+        Debug.Log(gm);
         Debug.Log("Reminder: 0 = Attack, 1 = Mine, 2 = Move");
 	}
 	
@@ -56,15 +57,19 @@ public class RabbitAI : MonoBehaviour {
 					currentState = RabbitState.Attack;
 					Attack();
 					print("Attack");
-				}
-				queuedLayers.RemoveAt(0);						// Remove the highest priority action after execution
-																// may need to change the position of this
-			}
-		}
+                }
+                queuedLayers.RemoveAt(0);                       // Remove the highest priority action after execution
+                                                                // may need to change the position of this
+            }
+        }
 		catch (System.IndexOutOfRangeException e)
 		{
 			throw new System.ArgumentOutOfRangeException("index parameter is out of range.", e);
 		}
+        if(GetComponent<RabbitProperties>().health <= 0)
+        {
+            Destroy(this.gameObject);
+        }
 	}
 
 	public void Move()
