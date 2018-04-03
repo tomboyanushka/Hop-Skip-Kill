@@ -22,8 +22,6 @@ public class RabbitAI : MonoBehaviour {
 		currentState = RabbitState.Move;
         cooldown = 1f;
         gm = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManagment>();
-        Debug.Log(gm);
-        Debug.Log("Reminder: 0 = Attack, 1 = Mine, 2 = Move");
 	}
 	
 	// Update is called once per frame
@@ -141,7 +139,6 @@ public class RabbitAI : MonoBehaviour {
 
 	private void OnTriggerEnter2D(Collider2D collision)
 	{
-        Debug.Log("Trigger: " + collision.tag);
 		if(collision.tag == "Floor")
 		{
 			properties.onFloor = true;
@@ -164,6 +161,7 @@ public class RabbitAI : MonoBehaviour {
         // Attacking rabbit
         else if (collision.tag == "Rabbit")
         {
+            queuedLayers.Clear();
             // If it's not a rabbit from the same side, attack it
             if (collision.gameObject.GetComponent<RabbitProperties>().RabbitType != GetComponent<RabbitProperties>().RabbitType)
             {
@@ -181,6 +179,19 @@ public class RabbitAI : MonoBehaviour {
 
     private void OnTriggerStay2D(Collider2D collision)
     {
+        if (collision.tag == "Floor")
+        {
+            properties.onFloor = true;
+            rBody.gravityScale = 0;
+        }
+        else
+        {
+            properties.onFloor = false;
+            rBody.gravityScale = 1;
+            GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezePositionY;
+        }
+
+
         // Attacking wall
         if (collision.tag == "Wall")
         {
@@ -190,6 +201,7 @@ public class RabbitAI : MonoBehaviour {
         // Attacking rabbit
         else if (collision.tag == "Rabbit")
         {
+            queuedLayers.Clear();
             // If it's not a rabbit from the same side, attack it
             if (collision.gameObject.GetComponent<RabbitProperties>().RabbitType != GetComponent<RabbitProperties>().RabbitType)
             {
