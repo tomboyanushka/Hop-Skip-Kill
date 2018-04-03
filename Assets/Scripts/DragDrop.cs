@@ -1,39 +1,26 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 
-public class DragDrop : MonoBehaviour {
+public class DragDrop : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
+{
 
-   [System.Serializable]
-     class IconColor
-     {
-         public Color hoverColor;
-         public Color originalColor; 
-
-     }
-
-    private Color c1;
-    private Color c2;
-
-    IconColor icon;
+    /*private Color hoverColor = Color.cyan;
+    private Color originalColor = Color.clear;
     private bool dragging = false;
     private float distanceDragged;
 
-    void Start()
-    {
-        c1 = icon.hoverColor;
-        c2 = icon.originalColor;
-    }
-
+   
     void OnMouseEnter()
     {
-        GetComponent<Renderer>().material.color = c1;
+        GetComponent<Renderer>().material.color = hoverColor;
     }
 
     void OnMouseExit()
     {
-        GetComponent<Renderer>().material.color = c2;
+        GetComponent<Renderer>().material.color = originalColor;
     }
 
     void OnMouseDown()
@@ -52,5 +39,32 @@ public class DragDrop : MonoBehaviour {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         Vector3 rayPoint = ray.GetPoint(distanceDragged);
         transform.position = rayPoint;
+    }*/
+
+    public static GameObject dragRabbit;
+    Vector3 startPosition;
+    Transform startParent;
+
+    public void OnBeginDrag(PointerEventData eventData)
+    {
+        dragRabbit = gameObject;
+        startPosition = transform.position;
+        startParent = transform.parent;
+        GetComponent<CanvasGroup>().blocksRaycasts = false;
+    }
+
+    public void OnDrag(PointerEventData eventData)
+    {
+        transform.position = Input.mousePosition;
+    }
+
+    public void OnEndDrag(PointerEventData eventData)
+    {
+        dragRabbit = null;
+        GetComponent<CanvasGroup>().blocksRaycasts = true;
+        if (transform.parent == startParent)
+        {
+            transform.position = startPosition;
+        }
     }
 }

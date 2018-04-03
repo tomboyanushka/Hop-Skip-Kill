@@ -5,9 +5,13 @@ using UnityEngine;
 public class MetaAI : MonoBehaviour
 {
     public int rabbitCount = 10;
-    public int resourceCount = 10;
+    public int resourceCount;
     public GameObject spawnObject;
     public GameObject spawnPT;
+    GameManagment manager;
+    int res;
+  
+    
 
     public GameObject spawnTop, spawnMiddle, spawnBottom;
 
@@ -19,38 +23,43 @@ public class MetaAI : MonoBehaviour
 
     private void Start()
     {
-
+        
     }
 
     private void Update()
     {
-        /*
-        int place = Random.Range(0, 3);
-        if(place == 0)
-        {
-            spawnPT = spawnTop;
-        }
-        else if(place == 1)
-        {
-            spawnPT = spawnMiddle;
-        }
-        else
-        {
-            spawnPT = spawnBottom;
-        }
-        */
+        resourceCount = manager.GetComponent<GameManagment>().enemyResourceSum;
+        res = Random.Range(0, 1);
         spawnPT = spawnMiddle;
         if (rabbitCount > 0 && isRabbitSpawned == false)
         {
-            GameObject newRabbit = Instantiate(spawnObject, spawnPT.transform.position, new Quaternion()) as GameObject;
-            newRabbit.GetComponent<RabbitProperties>().RabbitType = 1;
-            newRabbit.GetComponent<RabbitProperties>().speed = -(newRabbit.GetComponent<RabbitProperties>().speed);
-            rabbitCount--;
-            isRabbitSpawned = true;      
-            
+            spawnRabbit();
+        }
+        if (resourceCount >= 0)
+        {
+            if (res == 0)
+            {
+                manager.GetComponent<GameManagment>().useResources(1, 0);
+            }
+            else if (res == 1)
+            {
+                manager.GetComponent<GameManagment>().useResources(1, 1);
+            }
         }
         
     }
 
-    
+    public void spawnRabbit()
+    {
+        GameObject newRabbit = Instantiate(spawnObject, spawnPT.transform.position, new Quaternion()) as GameObject;
+        newRabbit.GetComponent<RabbitProperties>().RabbitType = 1;
+        newRabbit.GetComponent<RabbitProperties>().speed = -(newRabbit.GetComponent<RabbitProperties>().speed);
+        rabbitCount--;
+        isRabbitSpawned = true;
+
+    }
+
+
+
+
 }

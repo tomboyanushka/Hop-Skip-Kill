@@ -12,7 +12,6 @@ public class RabbitAI : MonoBehaviour {
     GameObject target;
     float cooldown;
     public int miningSpeed = 1;
-	bool attacking = false;
     GameManagment gm;
 
 	// Use this for initialization
@@ -23,12 +22,12 @@ public class RabbitAI : MonoBehaviour {
 		currentState = RabbitState.Move;
         cooldown = 1f;
         gm = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManagment>();
+        //Debug.Log(gm);
         Debug.Log("Reminder: 0 = Attack, 1 = Mine, 2 = Move");
 	}
 	
 	// Update is called once per frame
 	void Update () {
-	
 		try
 		{
 			if (queuedLayers == null || queuedLayers.Count == 0)
@@ -37,14 +36,13 @@ public class RabbitAI : MonoBehaviour {
 			}
 			else
 			{
-				//Debug.Log(queuedLayers[0]);
 				queuedLayers.Sort();                            // Ascending order sort, Sorts according to highest priority (0 = highest priority)
-				if (queuedLayers[0] == (int)RabbitState.Move )	// index 0 will have lowest value after sort
+				if (queuedLayers[0] == (int)RabbitState.Move)	// index 0 will have lowest value after sort
 				{
 					// Call move function
 					currentState = RabbitState.Move;
 					Move();
-				
+					print("Move");
 				}
 				else if (queuedLayers[0] == (int)RabbitState.Mine)
 				{
@@ -58,37 +56,32 @@ public class RabbitAI : MonoBehaviour {
 					// Call attack function
 					currentState = RabbitState.Attack;
 					Attack();
-					//print("Attack");
-				}
-				queuedLayers.RemoveAt(0);						// Remove the highest priority action after execution
-																// may need to change the position of this
-			}
-		}
+					print("Attack");
+                }
+                queuedLayers.RemoveAt(0);                       // Remove the highest priority action after execution
+                                                                // may need to change the position of this
+            }
+        }
 		catch (System.IndexOutOfRangeException e)
 		{
 			throw new System.ArgumentOutOfRangeException("index parameter is out of range.", e);
 		}
-
-		if(properties.health <= 0)
-		{
-			Destroy(gameObject);
-		}
+        if(GetComponent<RabbitProperties>().health <= 0)
+        {
+            Destroy(this.gameObject);
+        }
 	}
 
 	public void Move()
 	{
-		if (!attacking)
-		{
-			print("Move");
-			if (properties.onFloor)
-			{
-				transform.position += new Vector3(properties.speed * Time.deltaTime, 0, 0);
-			}
-			else if (!properties.onFloor)
-			{
-				transform.position += new Vector3(0, -properties.gravity * Time.deltaTime, 0);
-			}
-		}
+        if (properties.onFloor)
+        {
+            transform.position += new Vector3(properties.speed * Time.deltaTime, 0, 0);
+        }
+        else if (!properties.onFloor)
+        {
+            transform.position += new Vector3(0, -properties.gravity * Time.deltaTime, 0);
+        }
     }
 
     public void Mine()
@@ -130,21 +123,13 @@ public class RabbitAI : MonoBehaviour {
 
     public void Attack()
     {
-		print("attack");
-		//attacking = true;
         cooldown -= Time.deltaTime;
         if(cooldown <= 0)
         {
             if(target.tag == "Rabbit")
             {
                 target.GetComponent<RabbitProperties>().health--;
-				if(target.GetComponent<RabbitProperties>().health <= 0)
-				{
-					attacking = false;
-				}
-				
-				//queuedLayers.RemoveAt(0);
-				Debug.Log(target.name + " health: " + target.GetComponent<RabbitProperties>().health);
+                Debug.Log(target.name + " health: " + target.GetComponent<RabbitProperties>().health);
             }
             else
             {
@@ -156,7 +141,6 @@ public class RabbitAI : MonoBehaviour {
 
 	private void OnTriggerEnter2D(Collider2D collision)
 	{
-        Debug.Log("Trigger: " + collision.tag);
 		if(collision.tag == "Floor")
 		{
 			properties.onFloor = true;
@@ -166,85 +150,73 @@ public class RabbitAI : MonoBehaviour {
 		{
 			properties.onFloor = false;
 			rBody.gravityScale = 1;
-			GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezePositionY;
+            GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezePositionY;
 		}
 
 
-		// Attacking wall
-		if (collision.tag == "Wall")
-		{
-			queuedLayers.Add((int)RabbitState.Attack);
-			target = collision.gameObject;
-		}
-		// Attacking rabbit
-		else if (collision.tag == "Rabbit")
-		{
-			clearMove();
-			//queuedLayers.Clear();
-			// If it's not a rabbit from the same side, attack it
-			if (collision.gameObject.GetComponent<RabbitProperties>().RabbitType != GetComponent<RabbitProperties>().RabbitType)
-			{
-				queuedLayers.Add((int)RabbitState.Attack);
-				target = collision.gameObject;
-			}
-		}
-		// Mining
-		else if (collision.tag == "Resource")
-		{
-			queuedLayers.Add((int)RabbitState.Mine);
-			target = collision.gameObject;
-		}
-	}
+        // Attacking wall
+        if (collision.tag == "Wall")
+        {
+            queuedLayers.Add((int)RabbitState.Attack);
+            target = collision.gameObject;
+        }
+        // Attacking rabbit
+        else if (collision.tag == "Rabbit")
+        {
+            queuedLayers.Clear();
+            // If it's not a rabbit from the same side, attack it
+            if (collision.gameObject.GetComponent<RabbitProperties>().RabbitType != GetComponent<RabbitProperties>().RabbitType)
+            {
+                queuedLayers.Add((int)RabbitState.Attack);
+                target = collision.gameObject;
+            }
+        }
+        // Mining
+        else if (collision.tag == "Resource")
+        {
+            queuedLayers.Add((int)RabbitState.Mine);
+            target = collision.gameObject;
+        }
+    }
 
     private void OnTriggerStay2D(Collider2D collision)
     {
-		if (collision.tag == "Floor")
-		{
-			properties.onFloor = true;
-			rBody.gravityScale = 0;
-		}
-		else
-		{
-			properties.onFloor = false;
-			rBody.gravityScale = 1;
-			GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezePositionY;
-		}
-		// Attacking wall
-		if (collision.tag == "Wall")
-		{
-			queuedLayers.Add((int)RabbitState.Attack);
-			target = collision.gameObject;
-		}
-		// Attacking rabbit
-		else if (collision.tag == "Rabbit")
-		{
-			clearMove();
-			//queuedLayers.Clear();
-			// If it's not a rabbit from the same side, attack it
-			if (collision.gameObject.GetComponent<RabbitProperties>().RabbitType != GetComponent<RabbitProperties>().RabbitType)
-			{
-				attacking = true;
-				queuedLayers.Add((int)RabbitState.Attack);
-				target = collision.gameObject;
-			}
-		}
-		// Mining
-		else if (collision.tag == "Resource")
-		{
-			queuedLayers.Add((int)RabbitState.Mine);
-			target = collision.gameObject;
-		}
-	}
+        if (collision.tag == "Floor")
+        {
+            properties.onFloor = true;
+            rBody.gravityScale = 0;
+        }
+        else
+        {
+            properties.onFloor = false;
+            rBody.gravityScale = 1;
+            GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezePositionY;
+        }
 
-	void clearMove()
-	{
-		for( int i = 0; i < queuedLayers.Count; i++)
-		{
-			if(queuedLayers[i] == (int)RabbitState.Move)
-			{
-				queuedLayers.RemoveAt(i);
-			}
-		}
-	}
+
+        // Attacking wall
+        if (collision.tag == "Wall")
+        {
+            queuedLayers.Add((int)RabbitState.Attack);
+            target = collision.gameObject;
+        }
+        // Attacking rabbit
+        else if (collision.tag == "Rabbit")
+        {
+            queuedLayers.Clear();
+            // If it's not a rabbit from the same side, attack it
+            if (collision.gameObject.GetComponent<RabbitProperties>().RabbitType != GetComponent<RabbitProperties>().RabbitType)
+            {
+                queuedLayers.Add((int)RabbitState.Attack);
+                target = collision.gameObject;
+            }
+        }
+        // Mining
+        else if (collision.tag == "Resource")
+        {
+            queuedLayers.Add((int)RabbitState.Mine);
+            target = collision.gameObject;
+        }
+    }
 }
 
