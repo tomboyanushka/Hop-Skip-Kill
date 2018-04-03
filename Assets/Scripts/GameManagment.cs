@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GameManagment : MonoBehaviour {
+public class GameManagment : MonoBehaviour
+{
 
     public int PlayerResourceA;
     public int EnemyResourceA;
