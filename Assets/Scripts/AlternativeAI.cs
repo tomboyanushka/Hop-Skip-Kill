@@ -8,6 +8,7 @@ public class AlternativeAI : MonoBehaviour {
 	List<int> queuedLayers = new List<int>();       // priority order can be changed as needed
 	Rigidbody2D rBody;
 	RabbitProperties properties;
+    [SerializeField]
 	RabbitState currentState;
 	GameObject target;
 	float cooldown;
@@ -34,7 +35,7 @@ public class AlternativeAI : MonoBehaviour {
 			Destroy(gameObject);
 		}
 
-		if(currentState == RabbitState.Move)
+        if (currentState == RabbitState.Move)
 		{
 			Move();
 		}
@@ -50,7 +51,7 @@ public class AlternativeAI : MonoBehaviour {
 
 	public void Move()
 	{
-		if (!attacking)
+		//if (!attacking)
 		{
 			if (properties.onFloor)
 			{
@@ -114,104 +115,29 @@ public class AlternativeAI : MonoBehaviour {
 					currentState = RabbitState.Move;
 					attacking = false;
 				}
-
-				//queuedLayers.RemoveAt(0);
 			}
 			else
 			{
 				// Decrement enemy resources
 			}
-			cooldown = 1;
+			cooldown = Random.Range(1, 2);
 		}
 	}
 
 	private void OnTriggerEnter2D(Collider2D collision)
 	{
 		StateChangeLogic(collision);
-		//if (collision.tag == "Floor")
-		//{
-		//	SetState(true, false, false);
-		//	properties.onFloor = true;
-		//	rBody.gravityScale = 0;
-		//}
-		//else
-		//{
-		//	//SetState(false, false, true);
-		//	properties.onFloor = false;
-		//	rBody.gravityScale = 1;
-		//	GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezePositionY;
-		//}
-		//// Attacking wall
-		//if (collision.tag == "Wall")
-		//{
-		//	SetState(false, false, true);
-		//	queuedLayers.Add((int)RabbitState.Attack);
-		//	target = collision.gameObject;
-		//}
-		//// Attacking rabbit
-		//else if (collision.tag == "Rabbit")
-		//{
-		//	SetState(false, false, true);
-		//	// If it's not a rabbit from the same side, attack it
-		//	if (collision.gameObject.GetComponent<RabbitProperties>().RabbitType != GetComponent<RabbitProperties>().RabbitType)
-		//	{
-		//		attacking = true;
-		//		queuedLayers.Add((int)RabbitState.Attack);
-		//		target = collision.gameObject;
-		//	}
-		//}
-		//// Mining
-		//else if (collision.tag == "Resource")
-		//{
-		//	SetState(false, true, false);
-		//	queuedLayers.Add((int)RabbitState.Mine);
-		//	target = collision.gameObject;
-		//}
 	}
 
 	private void OnTriggerStay2D(Collider2D collision)
 	{
 		StateChangeLogic(collision);
-		//if (collision.tag == "Floor")
-		//{
-		//	SetState(true, false, false);
-		//	properties.onFloor = true;
-		//	rBody.gravityScale = 0;
-		//}
-		//else
-		//{
-		//	//SetState(false, false, true);
-		//	properties.onFloor = false;
-		//	rBody.gravityScale = 1;
-		//	GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezePositionY;
-		//}
-		//// Attacking wall
-		//if (collision.tag == "Wall")
-		//{
-		//	SetState(false, false, true);
-		//	queuedLayers.Add((int)RabbitState.Attack);
-		//	target = collision.gameObject;
-		//}
-		//// Attacking rabbit
-		//else if (collision.tag == "Rabbit")
-		//{
-		//	SetState(false, false, true);
-		//	// If it's not a rabbit from the same side, attack it
-		//	if (collision.gameObject.GetComponent<RabbitProperties>().RabbitType != GetComponent<RabbitProperties>().RabbitType)
-		//	{
-		//		attacking = true;
-		//		queuedLayers.Add((int)RabbitState.Attack);
-		//		target = collision.gameObject;
-		//	}
-		//}
-		//// Mining
-		//else if (collision.tag == "Resource")
-		//{
-		//	SetState(false, true, false);
-		//	queuedLayers.Add((int)RabbitState.Mine);
-		//	target = collision.gameObject;
-		//}
 	}
+
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        StateChangeLogic(collision);
+    }
 
 	void SetState(bool move,bool mine,bool attack)
 	{
@@ -227,49 +153,61 @@ public class AlternativeAI : MonoBehaviour {
 		{
 			currentState = RabbitState.Attack;
 		}
-        Debug.Log(currentState);
     }
 
 	void StateChangeLogic(Collider2D collision)
 	{
-		if (collision.tag == "Floor")
-		{
-			SetState(true, false, false);
-			properties.onFloor = true;
-			rBody.gravityScale = 0;
-		}
-		else
-		{
-			//SetState(false, false, true);
-			properties.onFloor = false;
-			rBody.gravityScale = 1;
-			GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezePositionY;
-		}
+        bool stateSet = false;
 		// Attacking wall
 		if (collision.tag == "Wall")
 		{
 			SetState(false, false, true);
 			queuedLayers.Add((int)RabbitState.Attack);
 			target = collision.gameObject;
+            stateSet = true;
 		}
 		// Attacking rabbit
 		else if (collision.tag == "Rabbit")
 		{
-			SetState(false, false, true);
 			// If it's not a rabbit from the same side, attack it
 			if (collision.gameObject.GetComponent<RabbitProperties>().RabbitType != GetComponent<RabbitProperties>().RabbitType)
-			{
-				attacking = true;
+            {
+                SetState(false, false, true);
+                attacking = true;
 				queuedLayers.Add((int)RabbitState.Attack);
 				target = collision.gameObject;
-			}
-		}
+                stateSet = true;
+            }
+        }
 		// Mining
 		else if (collision.tag == "Resource")
 		{
-			SetState(false, true, false);
-			queuedLayers.Add((int)RabbitState.Mine);
-			target = collision.gameObject;
-		}
-	}
+            int numRabbits = collision.gameObject.GetComponent<Resource>().playerRabbits.Count + collision.gameObject.GetComponent<Resource>().enemyRabbits.Count;
+            int randNum = Random.Range(2, 10);
+            if (numRabbits < randNum)
+            {
+                SetState(false, true, false);
+                queuedLayers.Add((int)RabbitState.Mine);
+                target = collision.gameObject;
+                stateSet = true;
+            }
+        }
+
+        if (!stateSet)
+        {
+            if (collision.tag == "Floor")
+            {
+                SetState(true, false, false);
+                properties.onFloor = true;
+                rBody.gravityScale = 0;
+            }
+            else
+            {
+                //SetState(false, false, true);
+                properties.onFloor = false;
+                rBody.gravityScale = 1;
+                GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezePositionY;
+            }
+        }
+    }
 }

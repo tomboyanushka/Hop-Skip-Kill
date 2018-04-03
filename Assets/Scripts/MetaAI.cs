@@ -66,6 +66,8 @@ public class MetaAI : MonoBehaviour
                 break;
         }
 
+        spawnPT = spawnMiddle;
+
         GameObject newRabbit = Instantiate(spawnObject, spawnPT.transform.position, new Quaternion()) as GameObject;
         newRabbit.GetComponent<RabbitProperties>().RabbitType = 1;
         newRabbit.GetComponent<RabbitProperties>().speed = -(newRabbit.GetComponent<RabbitProperties>().speed);

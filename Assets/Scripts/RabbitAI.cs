@@ -129,7 +129,6 @@ public class RabbitAI : MonoBehaviour {
             if(target.tag == "Rabbit")
             {
                 target.GetComponent<RabbitProperties>().health--;
-                Debug.Log(target.name + " health: " + target.GetComponent<RabbitProperties>().health);
             }
             else
             {

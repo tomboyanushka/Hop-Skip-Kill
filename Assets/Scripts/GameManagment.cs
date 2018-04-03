@@ -20,9 +20,11 @@ public class GameManagment : MonoBehaviour
     public List<GameObject> enemyRabbits;
 
     RabbitProperties thisRabbitprop; //accessing the Rabbitproperties script.
-    RabbitAI rAI; //accessing the rabbitAI script
-    int goal,type,res;  
-    bool startTimer = false;
+
+    int goal, type, res;
+
+    bool playerStartTimer = false;
+    bool enemyStartTimer = false;
     // Use this for initialization
     void Start () {
         PlayerResourceA = 0;
@@ -37,7 +39,9 @@ public class GameManagment : MonoBehaviour
        
         goal = 50;
         thisRabbitprop = gameObject.GetComponent<RabbitProperties>();
-        rAI = gameObject.GetComponent<RabbitAI>();
+
+        playerRabbits = new List<GameObject>();
+        enemyRabbits = new List<GameObject>();
     }
 
     // Update is called once per frame
@@ -64,13 +68,29 @@ public class GameManagment : MonoBehaviour
             collideResourcewall = false;
         }
 
-        if (startTimer)
+        if (playerStartTimer)
         {
             targetTime -= Time.deltaTime;
             if (targetTime <= 0.0f)
             {
-                rAI.miningSpeed = 1;
-                startTimer = false;
+                foreach(GameObject g in playerRabbits)
+                {
+                    g.GetComponent<AlternativeAI>().miningSpeed = 1;
+                }
+                playerStartTimer = false;
+            }
+        }
+
+        if (enemyStartTimer)
+        {
+            targetTime -= Time.deltaTime;
+            if (targetTime <= 0.0f)
+            {
+                foreach (GameObject g in enemyRabbits)
+                {
+                    g.GetComponent<AlternativeAI>().miningSpeed = 1;
+                }
+                enemyStartTimer = false;
             }
         }
     }
@@ -111,7 +131,7 @@ public class GameManagment : MonoBehaviour
                     g.GetComponent<AlternativeAI>().miningSpeed = 2;
                 }
                 //rAI.miningSpeed = 2;
-                startTimer = true;
+                playerStartTimer = true;
             }
             else
             {
@@ -128,7 +148,7 @@ public class GameManagment : MonoBehaviour
                     g.GetComponent<AlternativeAI>().miningSpeed = 2;
                 }
                 //rAI.miningSpeed = 2;
-                startTimer = true;
+                enemyStartTimer = true;
             }
             else
             {
