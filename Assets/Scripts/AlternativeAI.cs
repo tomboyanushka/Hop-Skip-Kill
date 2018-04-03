@@ -15,6 +15,7 @@ public class AlternativeAI : MonoBehaviour {
 	public int miningSpeed = 1;
 	bool attacking = false;
 	GameManagment gm;
+    float yPos = float.PositiveInfinity;
 
 	// Use this for initialization
 	void Start()
@@ -30,6 +31,10 @@ public class AlternativeAI : MonoBehaviour {
 	// Update is called once per frame
 	void Update()
 	{
+        if(yPos != float.PositiveInfinity)
+        {
+            transform.position = new Vector3(transform.position.x, yPos, 0);
+        }
 		if (properties.health <= 0)
 		{
 			Destroy(gameObject);
@@ -130,6 +135,10 @@ public class AlternativeAI : MonoBehaviour {
 	private void OnTriggerEnter2D(Collider2D collision)
 	{
 		StateChangeLogic(collision);
+        if(collision.tag == "Floor")
+        {
+            yPos = transform.position.y;
+        }
 	}
 
 	private void OnTriggerStay2D(Collider2D collision)

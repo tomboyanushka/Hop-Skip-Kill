@@ -10,6 +10,7 @@ public class MetaAI : MonoBehaviour
     public GameObject spawnPT;
     GameManagment manager;
     int res;
+    float generateTimer = 1.5f;
   
     
 
@@ -30,10 +31,11 @@ public class MetaAI : MonoBehaviour
     {
         resourceCount = manager.enemyResourceSum;
         res = Random.Range(0, 1);
-        spawnPT = spawnMiddle;
-        if (rabbitCount > 0 && isRabbitSpawned == false)
+        generateTimer -= Time.deltaTime;
+        if (generateTimer <= 0f && rabbitCount > 0)
         {
             spawnRabbit();
+            generateTimer = 1.5f;
         }
         if (resourceCount >= 0)
         {
@@ -65,8 +67,6 @@ public class MetaAI : MonoBehaviour
                 spawnPT = spawnBottom;
                 break;
         }
-
-        spawnPT = spawnMiddle;
 
         GameObject newRabbit = Instantiate(spawnObject, spawnPT.transform.position, new Quaternion()) as GameObject;
         newRabbit.GetComponent<RabbitProperties>().RabbitType = 1;
