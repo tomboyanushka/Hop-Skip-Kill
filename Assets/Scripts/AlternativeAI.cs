@@ -107,20 +107,23 @@ public class AlternativeAI : MonoBehaviour {
 		cooldown -= Time.deltaTime;
 		if (cooldown <= 0)
 		{
-			if (target.tag == "Rabbit")
+			if (target != null)
 			{
-				target.GetComponent<RabbitProperties>().health--;
-				if (target.GetComponent<RabbitProperties>().health <= 0)
+				if (target.tag == "Rabbit")
 				{
-					currentState = RabbitState.Move;
-					attacking = false;
+					target.GetComponent<RabbitProperties>().health--;
+					if (target.GetComponent<RabbitProperties>().health <= 0)
+					{
+						currentState = RabbitState.Move;
+						attacking = false;
+					}
 				}
+				else
+				{
+					// Decrement enemy resources
+				}
+				cooldown = Random.Range(1, 2);
 			}
-			else
-			{
-				// Decrement enemy resources
-			}
-			cooldown = Random.Range(1, 2);
 		}
 	}
 

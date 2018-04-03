@@ -51,7 +51,7 @@ public class GameManagment : MonoBehaviour
         enemyResourceSum = EnemyResourceA + EnemyResourceB + EnemyResourceC;
 
 
-        useResources(type,res);
+        //useResources(type,res);
         if (playerResourceSum >= goal)
         {
             Debug.Log("Player Win!");
@@ -95,7 +95,7 @@ public class GameManagment : MonoBehaviour
         }
     }
  
-    void OnTriggerEnter2D(Collider2D other)
+   void OnTriggerEnter2D(Collider2D other)
     {
         switch (other.gameObject.tag)
         {
@@ -125,34 +125,44 @@ public class GameManagment : MonoBehaviour
         {
             if(res == 0)
             {
-                PlayerResourceA--;
-                foreach(GameObject g in playerRabbits)
-                {
-                    g.GetComponent<AlternativeAI>().miningSpeed = 2;
-                }
-                //rAI.miningSpeed = 2;
-                playerStartTimer = true;
+				if (PlayerResourceA >= 1)
+				{
+					PlayerResourceA--;
+					foreach (GameObject g in playerRabbits)
+					{
+						g.GetComponent<AlternativeAI>().miningSpeed = 2;
+					}
+					//rAI.miningSpeed = 2;
+					playerStartTimer = true;
+				}
             }
             else
             {
-                PlayerResourceB--;
+				if(PlayerResourceB >=1)
+					PlayerResourceB--;
             }
         }
         else if (type == 1)
         {
             if (res==0)
             {
-                EnemyResourceA--;
-                foreach(GameObject g in enemyRabbits)
-                {
-                    g.GetComponent<AlternativeAI>().miningSpeed = 2;
-                }
-                //rAI.miningSpeed = 2;
-                enemyStartTimer = true;
+				if (EnemyResourceA >= 1)
+				{
+					EnemyResourceA--;
+					foreach (GameObject g in enemyRabbits)
+					{
+						g.GetComponent<AlternativeAI>().miningSpeed = 2;
+					}
+					//rAI.miningSpeed = 2;
+					enemyStartTimer = true;
+				}
             }
             else
             {
-                EnemyResourceB--;
+				if (EnemyResourceB >= 1)
+				{
+					EnemyResourceB--;
+				}
             }
             
         }

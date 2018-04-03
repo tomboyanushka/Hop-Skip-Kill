@@ -8,6 +8,7 @@ TagManager:
   - Rabbit
   - Resource
   - GameManager
+  - Wall
   layers:
   - Default
   - TransparentFX
