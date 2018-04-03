@@ -9,6 +9,10 @@ public class RabbitAI : MonoBehaviour {
 	Rigidbody2D rBody;
 	RabbitProperties properties;
 	RabbitState currentState;
+    GameObject target;
+    float cooldown;
+    public int miningSpeed = 1;
+    GameManagment gm;
 
 	// Use this for initialization
 	void Start () {
@@ -16,6 +20,9 @@ public class RabbitAI : MonoBehaviour {
 		properties = GetComponent<RabbitProperties>();
 		queuedLayers.Add((int)RabbitState.Move);
 		currentState = RabbitState.Move;
+        cooldown = 1f;
+        gm = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManagment>();
+        Debug.Log("Reminder: 0 = Attack, 1 = Mine, 2 = Move");
 	}
 	
 	// Update is called once per frame
@@ -34,20 +41,20 @@ public class RabbitAI : MonoBehaviour {
 					// Call move function
 					currentState = RabbitState.Move;
 					Move();
-					//print("Move");
+					print("Move");
 				}
 				else if (queuedLayers[0] == (int)RabbitState.Mine)
 				{
 					// Call mine function
 					currentState = RabbitState.Mine;
-					//Mine();
+					Mine();
 					print("Mine");
 				}
 				else if (queuedLayers[0] == (int)RabbitState.Attack)
 				{
 					// Call attack function
 					currentState = RabbitState.Attack;
-					//Attack();
+					Attack();
 					print("Attack");
 				}
 				queuedLayers.RemoveAt(0);						// Remove the highest priority action after execution
@@ -62,18 +69,74 @@ public class RabbitAI : MonoBehaviour {
 
 	public void Move()
 	{
-            if (properties.onFloor)
+        if (properties.onFloor)
+        {
+            transform.position += new Vector3(properties.speed * Time.deltaTime, 0, 0);
+        }
+        else if (!properties.onFloor)
+        {
+            transform.position += new Vector3(0, -properties.gravity * Time.deltaTime, 0);
+        }
+    }
+
+    public void Mine()
+    {
+        cooldown -= Time.deltaTime * miningSpeed;
+        if(cooldown <= 0)
+        {
+            // If we're increasing player resources
+            if (GetComponent<RabbitProperties>().RabbitType == 0)
             {
-                transform.position += new Vector3(properties.speed * Time.deltaTime, 0, 0);
+                // If Resource A
+                if(target.GetComponent<Resource>().currentResource == Resource.ResourceType.A)
+                {
+                    gm.PlayerResourceA++;
+                }
+                // If Resource B
+                else
+                {
+                    gm.PlayerResourceB++;
+                }
             }
-            else if (!properties.onFloor)
+            // If we're increasing AI resources
+            else
             {
-                transform.position += new Vector3(0, -properties.gravity * Time.deltaTime, 0);
+                // If Resource A
+                if (target.GetComponent<Resource>().currentResource == Resource.ResourceType.A)
+                {
+                    gm.EnemyResourceA++;
+                }
+                // If Resource B
+                else
+                {
+                    gm.EnemyResourceB++;
+                }
             }
+            cooldown = 3;
+        }
+    }
+
+    public void Attack()
+    {
+        cooldown -= Time.deltaTime;
+        if(cooldown <= 0)
+        {
+            if(target.tag == "Rabbit")
+            {
+                target.GetComponent<RabbitProperties>().health--;
+                Debug.Log(target.name + " health: " + target.GetComponent<RabbitProperties>().health);
+            }
+            else
+            {
+                // Decrement enemy resources
+            }
+            cooldown = 1;
+        }
     }
 
 	private void OnTriggerEnter2D(Collider2D collision)
 	{
+        Debug.Log("Trigger: " + collision.tag);
 		if(collision.tag == "Floor")
 		{
 			properties.onFloor = true;
@@ -83,7 +146,58 @@ public class RabbitAI : MonoBehaviour {
 		{
 			properties.onFloor = false;
 			rBody.gravityScale = 1;
+            GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezePositionY;
 		}
-	}
+
+
+        // Attacking wall
+        if (collision.tag == "Wall")
+        {
+            queuedLayers.Add((int)RabbitState.Attack);
+            target = collision.gameObject;
+        }
+        // Attacking rabbit
+        else if (collision.tag == "Rabbit")
+        {
+            // If it's not a rabbit from the same side, attack it
+            if (collision.gameObject.GetComponent<RabbitProperties>().RabbitType != GetComponent<RabbitProperties>().RabbitType)
+            {
+                queuedLayers.Add((int)RabbitState.Attack);
+                target = collision.gameObject;
+            }
+        }
+        // Mining
+        else if (collision.tag == "Resource")
+        {
+            queuedLayers.Add((int)RabbitState.Mine);
+            target = collision.gameObject;
+        }
+    }
+
+    private void OnTriggerStay2D(Collider2D collision)
+    {
+        // Attacking wall
+        if (collision.tag == "Wall")
+        {
+            queuedLayers.Add((int)RabbitState.Attack);
+            target = collision.gameObject;
+        }
+        // Attacking rabbit
+        else if (collision.tag == "Rabbit")
+        {
+            // If it's not a rabbit from the same side, attack it
+            if (collision.gameObject.GetComponent<RabbitProperties>().RabbitType != GetComponent<RabbitProperties>().RabbitType)
+            {
+                queuedLayers.Add((int)RabbitState.Attack);
+                target = collision.gameObject;
+            }
+        }
+        // Mining
+        else if (collision.tag == "Resource")
+        {
+            queuedLayers.Add((int)RabbitState.Mine);
+            target = collision.gameObject;
+        }
+    }
 }
 

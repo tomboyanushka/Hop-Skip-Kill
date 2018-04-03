@@ -9,6 +9,8 @@ public class MetaAI : MonoBehaviour
     public GameObject spawnObject;
     public GameObject spawnPT;
 
+    public GameObject spawnTop, spawnMiddle, spawnBottom;
+
     private Bounds bounds;
 
     bool isRabbitSpawned = false;
@@ -22,7 +24,22 @@ public class MetaAI : MonoBehaviour
 
     private void Update()
     {
-
+        /*
+        int place = Random.Range(0, 3);
+        if(place == 0)
+        {
+            spawnPT = spawnTop;
+        }
+        else if(place == 1)
+        {
+            spawnPT = spawnMiddle;
+        }
+        else
+        {
+            spawnPT = spawnBottom;
+        }
+        */
+        spawnPT = spawnMiddle;
         if (rabbitCount > 0 && isRabbitSpawned == false)
         {
             GameObject newRabbit = Instantiate(spawnObject, spawnPT.transform.position, new Quaternion()) as GameObject;
@@ -35,5 +52,5 @@ public class MetaAI : MonoBehaviour
         
     }
 
-
+    
 }
