@@ -35,6 +35,8 @@ public class GenerateRabbit : MonoBehaviour {
             Vector3 rabbitPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             rabbitPosition.z = 0f;
             rabbit.transform.position = rabbitPosition;
+
+            GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManagment>().playerRabbits.Add(rabbit);
         }
     }
 }

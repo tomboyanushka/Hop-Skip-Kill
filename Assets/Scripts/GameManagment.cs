@@ -15,6 +15,10 @@ public class GameManagment : MonoBehaviour
     public int playerResourceSum;
     public int enemyResourceSum;
     float targetTime= 5;
+
+    public List<GameObject> playerRabbits;
+    public List<GameObject> enemyRabbits;
+
     RabbitProperties thisRabbitprop; //accessing the Rabbitproperties script.
     RabbitAI rAI; //accessing the rabbitAI script
     int goal,type,res;  
@@ -102,7 +106,11 @@ public class GameManagment : MonoBehaviour
             if(res == 0)
             {
                 PlayerResourceA--;
-                rAI.miningSpeed = 2;
+                foreach(GameObject g in playerRabbits)
+                {
+                    g.GetComponent<AlternativeAI>().miningSpeed = 2;
+                }
+                //rAI.miningSpeed = 2;
                 startTimer = true;
             }
             else
@@ -115,7 +123,11 @@ public class GameManagment : MonoBehaviour
             if (res==0)
             {
                 EnemyResourceA--;
-                rAI.miningSpeed = 2;
+                foreach(GameObject g in enemyRabbits)
+                {
+                    g.GetComponent<AlternativeAI>().miningSpeed = 2;
+                }
+                //rAI.miningSpeed = 2;
                 startTimer = true;
             }
             else

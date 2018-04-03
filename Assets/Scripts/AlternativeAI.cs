@@ -52,7 +52,6 @@ public class AlternativeAI : MonoBehaviour {
 	{
 		if (!attacking)
 		{
-			print("Move");
 			if (properties.onFloor)
 			{
 				transform.position += new Vector3(properties.speed * Time.deltaTime, 0, 0);
@@ -103,7 +102,6 @@ public class AlternativeAI : MonoBehaviour {
 
 	public void Attack()
 	{
-		print("attack");
 		attacking = true;
 		cooldown -= Time.deltaTime;
 		if (cooldown <= 0)
@@ -118,7 +116,6 @@ public class AlternativeAI : MonoBehaviour {
 				}
 
 				//queuedLayers.RemoveAt(0);
-				Debug.Log(target.name + " health: " + target.GetComponent<RabbitProperties>().health);
 			}
 			else
 			{
@@ -230,7 +227,8 @@ public class AlternativeAI : MonoBehaviour {
 		{
 			currentState = RabbitState.Attack;
 		}
-	}
+        Debug.Log(currentState);
+    }
 
 	void StateChangeLogic(Collider2D collision)
 	{

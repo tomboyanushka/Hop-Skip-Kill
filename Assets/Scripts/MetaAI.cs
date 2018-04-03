@@ -23,12 +23,12 @@ public class MetaAI : MonoBehaviour
 
     private void Start()
     {
-        
+        manager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManagment>();
     }
 
     private void Update()
     {
-        resourceCount = manager.GetComponent<GameManagment>().enemyResourceSum;
+        resourceCount = manager.enemyResourceSum;
         res = Random.Range(0, 1);
         spawnPT = spawnMiddle;
         if (rabbitCount > 0 && isRabbitSpawned == false)
@@ -51,12 +51,27 @@ public class MetaAI : MonoBehaviour
 
     public void spawnRabbit()
     {
+        // Randomly assign spawning location
+        int r = Random.Range(0, 3);
+        switch (r)
+        {
+            case 0:
+                spawnPT = spawnTop;
+                break;
+            case 1:
+                spawnPT = spawnMiddle;
+                break;
+            default:
+                spawnPT = spawnBottom;
+                break;
+        }
+
         GameObject newRabbit = Instantiate(spawnObject, spawnPT.transform.position, new Quaternion()) as GameObject;
         newRabbit.GetComponent<RabbitProperties>().RabbitType = 1;
         newRabbit.GetComponent<RabbitProperties>().speed = -(newRabbit.GetComponent<RabbitProperties>().speed);
         rabbitCount--;
         isRabbitSpawned = true;
-
+        manager.enemyRabbits.Add(newRabbit);
     }
 
 
