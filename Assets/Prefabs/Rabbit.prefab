@@ -37,8 +37,8 @@ GameObject:
   - component: {fileID: 4803463732039162}
   - component: {fileID: 50266753814062852}
   - component: {fileID: 61128416187255674}
-  - component: {fileID: 114506079038246778}
   - component: {fileID: 114444954635526510}
+  - component: {fileID: 114533792419916786}
   m_Layer: 0
   m_Name: Rabbit
   m_TagString: Rabbit
@@ -92,7 +92,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 0
+  m_Constraints: 4
 --- !u!61 &61128416187255674
 BoxCollider2D:
   m_ObjectHideFlags: 1
@@ -136,7 +136,8 @@ MonoBehaviour:
   rabbitCount: 0
   RabbitType: 0
   health: 10
---- !u!114 &114506079038246778
+  isDead: 0
+--- !u!114 &114533792419916786
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -144,7 +145,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1871719170929218}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: daa439d859a39214b8a469379490a171, type: 3}
+  m_Script: {fileID: 11500000, guid: b7ef6a6ff159a2641b6ac822f1db09d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   miningSpeed: 1

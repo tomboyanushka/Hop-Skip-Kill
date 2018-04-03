@@ -12,4 +12,5 @@ public class RabbitProperties : MonoBehaviour {
     public int rabbitCount = 0;
     public int RabbitType = 0; // 0 = player
     public int health = 10;
+	public bool isDead = false;
 }
